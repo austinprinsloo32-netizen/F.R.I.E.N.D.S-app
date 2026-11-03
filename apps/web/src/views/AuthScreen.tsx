@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { useApp } from '../state/context'
 import { navigate } from '../lib/route'
+import { sendPasswordReset } from '../lib/recovery'
 import Icon, { type IconName } from '../components/Icon'
 
 const promises: { icon: IconName; title: string; text: string }[] = [
@@ -17,6 +18,17 @@ export default function AuthScreen() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
+
+  async function forgot() {
+    if (busy) return
+    setBusy(true)
+    setError('')
+    setInfo('')
+    const message = await sendPasswordReset(email)
+    setBusy(false)
+    if (message) setError(message)
+    else setInfo('If that email has an account, a reset link is on its way. Check your spam folder too.')
+  }
 
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -123,6 +135,15 @@ export default function AuthScreen() {
           <button type="submit" className="btn btn-accent btn-lg btn-block" disabled={busy}>
             {busy ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Log in'}
           </button>
+
+          {mode === 'login' && (
+            <p className="auth-legal">
+              <button type="button" className="link-btn" onClick={() => void forgot()}>
+                Forgot your password?
+              </button>{' '}
+              Type your email above first.
+            </p>
+          )}
 
           <p className="auth-legal">
             {mode === 'signup' && 'By creating an account you agree to the '}

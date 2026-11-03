@@ -198,10 +198,12 @@ function Privacy() {
 
       <h3>How long we keep it, and deleting it</h3>
       <p>
-        You can edit your profile, remove photos and delete your updates at any time. To delete your account and the
-        information tied to it, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> from the address you
-        signed up with. An in-app delete button is planned. We may keep a record of a report where that is needed to
-        keep other members safe.
+        You can edit your profile, remove photos and delete your updates at any time. To delete your account, email{' '}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> from the address you signed up with. We aim to delete
+        your profile, photos, plans and updates within 30 days, and we will tell you when it is done. An in-app delete
+        button is planned. Reports are different: we may keep a report and the details needed to act on it for up to 12
+        months after it is closed, so that other members stay safe. If something must be kept longer to meet the law,
+        we will keep only what the law requires.
       </p>
 
       <h3>Your rights</h3>

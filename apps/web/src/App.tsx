@@ -12,17 +12,29 @@ import Friends from './views/Friends'
 import Legal from './views/Legal'
 import Messages from './views/Messages'
 import Profile from './views/Profile'
+import ResetPassword from './views/ResetPassword'
 import Roadmap from './views/Roadmap'
+import { useRecovering } from './lib/recovery'
 
 function Routes() {
   const { user, authReady } = useApp()
   const route = useRoute()
+  const recovering = useRecovering()
 
   if (!authReady) {
     return (
       <div className="splash" role="status" aria-label="Loading">
         <span className="brand-mark">f.</span>
       </div>
+    )
+  }
+
+  if (recovering && user) {
+    return (
+      <>
+        <ResetPassword />
+        <Toasts />
+      </>
     )
   }
 
