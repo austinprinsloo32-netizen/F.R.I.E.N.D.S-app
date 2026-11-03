@@ -9,6 +9,9 @@ export const VIEWS = [
   'activities',
   'support',
   'profile',
+  'rules',
+  'privacy',
+  'admin',
 ] as const
 
 export type View = (typeof VIEWS)[number]

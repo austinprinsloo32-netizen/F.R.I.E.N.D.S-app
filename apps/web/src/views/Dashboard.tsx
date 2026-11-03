@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useApp } from '../state/context'
 import { navigate } from '../lib/route'
+import { planTime, spotsLeft } from '../lib/plans'
 import {
   describeShared,
   greeting,
@@ -13,10 +14,10 @@ import Icon, { type IconName } from '../components/Icon'
 import RelationButton from '../components/RelationButton'
 import StatusBar from '../components/StatusBar'
 import Feed from '../components/Feed'
+import InviteCard from '../components/InviteCard'
 
-const roadmap: { view: 'communities' | 'activities' | 'support'; icon: IconName; label: string; text: string }[] = [
+const roadmap: { view: 'communities' | 'support'; icon: IconName; label: string; text: string }[] = [
   { view: 'communities', icon: 'circles', label: 'Communities', text: 'Groups around shared interests' },
-  { view: 'activities', icon: 'calendar', label: 'Activities', text: 'Meet up in real life' },
   { view: 'support', icon: 'heart', label: 'Support', text: 'Guided listening' },
 ]
 
@@ -33,6 +34,8 @@ export default function Dashboard() {
     respondToRequest,
     notify,
     statusOf,
+    plans,
+    plansError,
   } = useApp()
   const [busyId, setBusyId] = useState<string | null>(null)
 
@@ -329,6 +332,43 @@ export default function Dashboard() {
               </div>
             </section>
           )}
+
+          {plansError !== 'setup' && (
+            <section className="panel">
+              <header className="panel-head">
+                <h3>Plans coming up</h3>
+                <button type="button" className="link-btn" onClick={() => navigate('activities')}>
+                  {plans.length > 0 ? 'See all' : 'Host a plan'}
+                </button>
+              </header>
+              {plans.length === 0 ? (
+                <p className="muted panel-empty">
+                  No plans yet. Host a coffee, a walk or a game night and let your friends tap “I’m in”.
+                </p>
+              ) : (
+                <ul className="mini-list">
+                  {plans.slice(0, 3).map((plan) => (
+                    <li key={plan.id}>
+                      <button type="button" className="mini-row mini-button" onClick={() => navigate('activities')}>
+                        <span className="soon-icon">
+                          <Icon name="calendar" size={20} />
+                        </span>
+                        <span className="mini-main">
+                          <strong>{plan.title}</strong>
+                          <small>{planTime(plan.starts_at)}</small>
+                        </span>
+                        <span className="status-pill">
+                          {spotsLeft(plan) === 0 ? 'Full' : `${spotsLeft(plan)} left`}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+
+          <InviteCard />
 
           <section className="panel">
             <header className="panel-head">

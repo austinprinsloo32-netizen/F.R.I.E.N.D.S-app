@@ -2975,3 +2975,337 @@ img {
   top: 16px;
   right: 16px;
 }
+
+/* ==========================================================================
+   Open plans (Activities)
+   ========================================================================== */
+
+.plan-section {
+  display: grid;
+  gap: 12px;
+}
+
+.plan-section h3 {
+  margin: 0;
+}
+
+.plan-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plan-card {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.plan-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.plan-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted);
+}
+
+.plan-details {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+.plan-spots {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+}
+
+.plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.plan-form {
+  gap: 14px;
+}
+
+.plan-form h3 {
+  margin: 0;
+}
+
+.plan-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.status-pill.pill-open {
+  background: var(--chip-shared-bg);
+  color: var(--chip-shared-ink);
+}
+
+.status-pill.pill-alert {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+/* ==========================================================================
+   Rules and privacy pages
+   ========================================================================== */
+
+.legal-public {
+  min-height: 100dvh;
+  padding: 0 16px 48px;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.legal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.legal {
+  gap: 14px;
+  line-height: 1.6;
+}
+
+.legal h3 {
+  margin: 18px 0 0;
+}
+
+.legal p,
+.legal ul {
+  margin: 0;
+}
+
+.legal ul {
+  display: grid;
+  gap: 6px;
+  padding-left: 22px;
+}
+
+.legal-callout {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  background: var(--peach-soft);
+  color: #3a2418;
+  border: 1px solid var(--peach);
+}
+
+:root[data-theme='dark'] .legal-callout {
+  background: #3a2418;
+  color: #fde6d8;
+}
+
+.legal-callout ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+.legal-callout li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.legal-callout a {
+  font-weight: 700;
+}
+
+.legal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+}
+
+.legal-table th,
+.legal-table td {
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+
+.legal-table th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.legal-foot {
+  padding-top: 16px;
+}
+
+/* ==========================================================================
+   Admin page
+   ========================================================================== */
+
+.admin {
+  max-width: 980px;
+}
+
+.funnel {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.funnel-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 230px) 1fr 90px;
+  align-items: center;
+  gap: 14px;
+}
+
+.funnel-track {
+  height: 14px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.funnel-bar {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--forest-mid), var(--lime));
+}
+
+.funnel-value {
+  text-align: right;
+  font-weight: 700;
+}
+
+.funnel-value small {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.admin-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-tile {
+  cursor: default;
+}
+
+.admin-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-item {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.admin-item p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-quote {
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--line);
+  background: var(--surface-2);
+  border-radius: 6px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-photo {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.admin-photo-main {
+  display: grid;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ==========================================================================
+   Small links in the sidebar and on the sign-in card
+   ========================================================================== */
+
+.side-legal {
+  margin: 8px 8px 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.auth-legal {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .funnel-row {
+    grid-template-columns: 1fr 70px;
+  }
+  .funnel-label {
+    grid-column: 1 / -1;
+  }
+  .admin-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .plan-form-row {
+    grid-template-columns: 1fr;
+  }
+  .admin-photo {
+    flex-direction: column;
+  }
+}

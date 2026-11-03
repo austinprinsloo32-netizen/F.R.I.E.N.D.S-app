@@ -13,6 +13,8 @@ import { toMember } from '../lib/utils'
 import { useFeed } from './useFeed'
 import { useSafety } from './useSafety'
 import { useTrust } from './useTrust'
+import { usePlans } from './usePlans'
+import { useAdmin } from './useAdmin'
 import type {
   ConversationRow,
   FriendRequestRow,
@@ -685,11 +687,6 @@ export default function AppProvider({ children }: { children: ReactNode }) {
     )
   }, [conversations, messagesByConv, lastRead, memberMap, uid])
 
-  const totalUnread = useMemo(
-    () => threads.reduce((sum, t) => sum + t.unread, 0),
-    [threads],
-  )
-
   // ---------- statuses & friends feed ----------
   const friendIdsKey = useMemo(() => friends.map((f) => f.id).join(','), [friends])
   const feed = useFeed(uid, friendIdsKey)
@@ -702,6 +699,8 @@ export default function AppProvider({ children }: { children: ReactNode }) {
   const safety = useSafety(uid, afterBlockChange)
 
   const trust = useTrust(uid)
+  const plansApi = usePlans(uid, friendIdsKey)
+  const admin = useAdmin(uid)
 
   const blockedSet = useMemo(() => new Set(safety.blockedIds), [safety.blockedIds])
   const visibleMembers = useMemo(
@@ -721,6 +720,8 @@ export default function AppProvider({ children }: { children: ReactNode }) {
     ...feed,
     ...safety,
     ...trust,
+    ...plansApi,
+    ...admin,
     user,
     authReady,
     signIn,

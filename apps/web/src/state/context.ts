@@ -12,6 +12,8 @@ import type {
 } from '../lib/types'
 
 import type { ReportInput } from '../lib/safety'
+import type { Plan, PlanInput } from '../lib/plans'
+import type { AdminData, AdminReport } from '../lib/admin'
 import type { GalleryPhoto, ProfileExtras, PromptAnswer } from '../lib/trust'
 import type {
   PostRow,
@@ -53,6 +55,25 @@ export type TrustApi = {
   loadGallery: (userId: string) => Promise<{ photos: GalleryPhoto[]; error: string }>
   addGalleryPhoto: (file: File) => Promise<string | null>
   removeGalleryPhoto: (photo: GalleryPhoto) => Promise<string | null>
+}
+
+export type PlansApi = {
+  plans: Plan[]
+  plansLoading: boolean
+  /** '' = fine, 'setup' = the SQL has not been run yet, anything else = message to show */
+  plansError: string
+  reloadPlans: () => Promise<void>
+  createPlan: (input: PlanInput) => Promise<string | null>
+  joinPlan: (planId: string) => Promise<string | null>
+  leavePlan: (planId: string) => Promise<string | null>
+  cancelPlan: (planId: string) => Promise<string | null>
+}
+
+export type AdminApi = {
+  isAdmin: boolean
+  loadAdmin: () => Promise<AdminData>
+  setReportStatus: (reportId: string, status: AdminReport['status']) => Promise<string | null>
+  reviewPhoto: (targetId: string, approved: boolean) => Promise<string | null>
 }
 
 export type IncomingRequest = { request: FriendRequestRow; member: Member }
@@ -113,7 +134,9 @@ export type AppContextValue = {
   dismissToast: (id: number) => void
 } & FeedApi &
   SafetyApi &
-  TrustApi
+  TrustApi &
+  PlansApi &
+  AdminApi
 
 export const AppContext = createContext<AppContextValue | null>(null)
 

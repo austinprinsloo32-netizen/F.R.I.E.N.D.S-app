@@ -3,10 +3,13 @@ import { useApp } from './state/context'
 import { useRoute } from './lib/route'
 import Shell from './components/Shell'
 import Toasts from './components/Toasts'
+import Activities from './views/Activities'
+import Admin from './views/Admin'
 import AuthScreen from './views/AuthScreen'
 import Dashboard from './views/Dashboard'
 import Discover from './views/Discover'
 import Friends from './views/Friends'
+import Legal from './views/Legal'
 import Messages from './views/Messages'
 import Profile from './views/Profile'
 import Roadmap from './views/Roadmap'
@@ -24,6 +27,15 @@ function Routes() {
   }
 
   if (!user) {
+    // The rules and privacy pages must be readable before anyone signs up.
+    if (route.view === 'rules' || route.view === 'privacy') {
+      return (
+        <>
+          <Legal which={route.view} standalone />
+          <Toasts />
+        </>
+      )
+    }
     return (
       <>
         <AuthScreen />
@@ -39,9 +51,10 @@ function Routes() {
       {route.view === 'friends' && <Friends tab={route.param} />}
       {route.view === 'messages' && <Messages friendId={route.param} />}
       {route.view === 'profile' && <Profile />}
-      {(route.view === 'communities' ||
-        route.view === 'activities' ||
-        route.view === 'support') && <Roadmap which={route.view} />}
+      {route.view === 'activities' && <Activities />}
+      {route.view === 'admin' && <Admin />}
+      {(route.view === 'rules' || route.view === 'privacy') && <Legal which={route.view} />}
+      {(route.view === 'communities' || route.view === 'support') && <Roadmap which={route.view} />}
     </Shell>
   )
 }

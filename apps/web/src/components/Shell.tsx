@@ -14,9 +14,11 @@ const primary: NavItem[] = [
   { view: 'messages', label: 'Messages', icon: 'message' },
 ]
 
+// Shown in the sidebar and the phone's More menu (the phone tab bar only has room for `primary`).
+const extra: NavItem[] = [{ view: 'activities', label: 'Activities', icon: 'calendar' }]
+
 const upcoming: NavItem[] = [
   { view: 'communities', label: 'Communities', icon: 'circles', soon: true },
-  { view: 'activities', label: 'Activities', icon: 'calendar', soon: true },
   { view: 'support', label: 'Support', icon: 'heart', soon: true },
 ]
 
@@ -29,9 +31,12 @@ const titles: Record<View, string> = {
   activities: 'Activities',
   support: 'Support',
   profile: 'My profile',
+  rules: 'Community rules',
+  privacy: 'Privacy',
+  admin: 'Admin',
 }
 
-const moreViews: View[] = ['communities', 'activities', 'support', 'profile']
+const moreViews: View[] = ['communities', 'activities', 'support', 'profile', 'rules', 'privacy', 'admin']
 
 type Theme = 'light' | 'dark'
 
@@ -54,7 +59,7 @@ function MoreSheet({
   onTheme: () => void
   onClose: () => void
 }) {
-  const { signOut } = useApp()
+  const { signOut, isAdmin } = useApp()
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -83,12 +88,29 @@ function MoreSheet({
           <button type="button" className="more-item" onClick={() => go('profile')}>
             <Icon name="user" size={20} /> My profile
           </button>
+          {extra.map((item) => (
+            <button key={item.view} type="button" className="more-item" onClick={() => go(item.view)}>
+              <Icon name={item.icon} size={20} /> {item.label}
+            </button>
+          ))}
           {upcoming.map((item) => (
             <button key={item.view} type="button" className="more-item" onClick={() => go(item.view)}>
               <Icon name={item.icon} size={20} /> {item.label}
               <span className="soon">Soon</span>
             </button>
           ))}
+          {isAdmin && (
+            <button type="button" className="more-item" onClick={() => go('admin')}>
+              <Icon name="sliders" size={20} /> Admin
+            </button>
+          )}
+          <div className="more-divider" />
+          <button type="button" className="more-item" onClick={() => go('rules')}>
+            <Icon name="users" size={20} /> Community rules
+          </button>
+          <button type="button" className="more-item" onClick={() => go('privacy')}>
+            <Icon name="shield" size={20} /> Privacy
+          </button>
           <div className="more-divider" />
           <button type="button" className="more-item" onClick={onTheme}>
             <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={20} />
@@ -111,7 +133,7 @@ function MoreSheet({
 }
 
 export default function Shell({ view, children }: { view: View; children: ReactNode }) {
-  const { me, user, totalUnread, incoming, signOut } = useApp()
+  const { me, user, totalUnread, incoming, signOut, isAdmin } = useApp()
   const [theme, setTheme] = useState<Theme>(initialTheme)
   const [moreOpen, setMoreOpen] = useState(false)
 
@@ -157,8 +179,15 @@ export default function Shell({ view, children }: { view: View; children: ReactN
 
         <nav className="nav" aria-label="Main">
           {primary.map(renderNav)}
+          {extra.map(renderNav)}
           <p className="nav-label">On the roadmap</p>
           {upcoming.map(renderNav)}
+          {isAdmin && (
+            <>
+              <p className="nav-label">Team</p>
+              {renderNav({ view: 'admin', label: 'Admin', icon: 'sliders' })}
+            </>
+          )}
         </nav>
 
         <button
@@ -178,6 +207,15 @@ export default function Shell({ view, children }: { view: View; children: ReactN
             <small>View &amp; edit profile</small>
           </span>
         </button>
+        <p className="side-legal">
+          <button type="button" className="link-btn" onClick={() => navigate('rules')}>
+            Rules
+          </button>
+          <span aria-hidden="true"> · </span>
+          <button type="button" className="link-btn" onClick={() => navigate('privacy')}>
+            Privacy
+          </button>
+        </p>
       </aside>
 
       <div className="main">

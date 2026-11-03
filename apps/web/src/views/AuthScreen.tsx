@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useApp } from '../state/context'
+import { navigate } from '../lib/route'
 import Icon, { type IconName } from '../components/Icon'
 
 const promises: { icon: IconName; title: string; text: string }[] = [
@@ -122,6 +123,18 @@ export default function AuthScreen() {
           <button type="submit" className="btn btn-accent btn-lg btn-block" disabled={busy}>
             {busy ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Log in'}
           </button>
+
+          <p className="auth-legal">
+            {mode === 'signup' && 'By creating an account you agree to the '}
+            <button type="button" className="link-btn" onClick={() => navigate('rules')}>
+              community rules
+            </button>
+            {mode === 'signup' ? ' and the ' : ' · '}
+            <button type="button" className="link-btn" onClick={() => navigate('privacy')}>
+              privacy page
+            </button>
+            {mode === 'signup' && '. You must be 18 or older.'}
+          </p>
 
           <p className="auth-switch">
             {mode === 'signup' ? 'Already a member?' : 'New to F.R.I.E.N.D.S?'}{' '}
