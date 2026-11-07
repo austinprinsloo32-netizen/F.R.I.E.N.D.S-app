@@ -19,6 +19,7 @@ import type {
   PostRow,
   ReactionKind,
   ReactionRow,
+  StatusExtra,
   StatusKind,
   StatusRow,
 } from '../lib/feed'
@@ -31,7 +32,8 @@ export type FeedApi = {
   reloadFeed: () => Promise<void>
   myStatus: StatusRow | undefined
   statusOf: (id: string) => StatusRow | undefined
-  setMyStatus: (kind: StatusKind, text: string) => Promise<string | null>
+  statusImageOf: (id: string) => string | undefined
+  setMyStatus: (kind: StatusKind, text: string, extra?: StatusExtra) => Promise<string | null>
   clearMyStatus: () => Promise<string | null>
   createPost: (content: string) => Promise<string | null>
   deletePost: (postId: string) => Promise<string | null>

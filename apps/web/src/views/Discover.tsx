@@ -23,64 +23,26 @@ function MemberCard({
   onOpen: (member: Member) => void
 }) {
   const { member, shared } = item
-  const sharedKeys = new Set(shared.map(normalizeInterest))
-  const visible = [...member.interests]
-    .sort(
-      (a, b) =>
-        Number(sharedKeys.has(normalizeInterest(b))) -
-        Number(sharedKeys.has(normalizeInterest(a))),
-    )
-    .slice(0, 3)
 
   return (
-    <article className="member-card">
-      <button type="button" className="member-open" onClick={() => onOpen(member)}>
-        <div className="member-photo">
-          {member.avatarUrl ? (
-            <img src={member.avatarUrl} alt="" loading="lazy" />
-          ) : (
-            <Avatar
-              id={member.id}
-              name={member.name}
-              initials={member.initials}
-              size={96}
-              rounded="soft"
-            />
-          )}
-          {shared.length > 0 && (
-            <span className="match-badge">
-              <Icon name="sparkle" size={13} /> {shared.length} in common
-            </span>
-          )}
-        </div>
-        <div className="member-info">
-          <h3>{member.name}</h3>
-          {member.location && (
-            <p className="muted with-icon">
-              <Icon name="pin" size={14} /> {member.location}
-            </p>
-          )}
-          <p className="member-bio">{member.bio || 'Still getting to know this member.'}</p>
-          {visible.length > 0 && (
-            <div className="chips">
-              {visible.map((interest) => (
-                <span
-                  key={interest}
-                  className={`chip ${sharedKeys.has(normalizeInterest(interest)) ? 'chip-shared' : ''}`}
-                >
-                  {interest}
-                </span>
-              ))}
-              {member.interests.length > visible.length && (
-                <span className="chip chip-more">+{member.interests.length - visible.length}</span>
-              )}
-            </div>
-          )}
-        </div>
+    <article className="friend-tile person-tile">
+      <button type="button" className="friend-open" onClick={() => onOpen(member)}>
+        <Avatar
+          id={member.id}
+          name={member.name}
+          initials={member.initials}
+          src={member.avatarUrl}
+          size={64}
+        />
+        <strong>{member.name}</strong>
+        <small>{member.location || 'Location not set'}</small>
+        {shared.length > 0 && (
+          <span className="match-pill">
+            <Icon name="sparkle" size={12} /> {shared.length} in common
+          </span>
+        )}
       </button>
-      <div className="member-footer">
-        <RelationButton member={member} size="sm" />
-      </div>
+      <RelationButton member={member} size="sm" />
     </article>
   )
 }
@@ -149,11 +111,7 @@ export default function Discover() {
         return true
       })
       .sort(
-        (a, b) =>
-          Number(relationOf(a.member.id).status === 'friends') -
-            Number(relationOf(b.member.id).status === 'friends') ||
-          b.shared.length - a.shared.length ||
-          a.member.name.localeCompare(b.member.name),
+        (a, b) => b.shared.length - a.shared.length || a.member.name.localeCompare(b.member.name),
       )
   }, [scored, query, location, picked, hideFriends, relationOf])
 
@@ -325,9 +283,9 @@ export default function Discover() {
             </button>
           </div>
         ) : membersLoading && members.length === 0 ? (
-          <div className="grid">
+          <div className="grid grid-compact">
             {Array.from({ length: 6 }, (_, i) => (
-              <div key={i} className="member-card skeleton" aria-hidden="true" />
+              <div key={i} className="friend-tile skeleton" aria-hidden="true" />
             ))}
           </div>
         ) : results.length === 0 ? (
@@ -348,7 +306,7 @@ export default function Discover() {
             )}
           </div>
         ) : (
-          <div className="grid">
+          <div className="grid grid-compact">
             {results.map((item) => (
               <MemberCard key={item.member.id} item={item} onOpen={setOpen} />
             ))}

@@ -7,6 +7,16 @@ export type StatusRow = {
   text: string
   expires_at: string
   updated_at: string
+  /** Path of an optional photo in the private status-media bucket */
+  image_path?: string | null
+  /** Optional link to a song or video on a music site */
+  music_url?: string | null
+}
+
+export type StatusExtra = {
+  imageFile?: File | null
+  removeImage?: boolean
+  musicUrl?: string
 }
 
 export type PostRow = {
@@ -64,4 +74,32 @@ export function isMissingTable(error: { code?: string; message?: string } | null
     message.includes('does not exist') ||
     message.includes('could not find the table')
   )
+}
+
+export const STATUS_BUCKET = 'status-media'
+export const STATUS_IMAGE_TTL = 3600
+export const STATUS_IMAGE_MAX_BYTES = 5 * 1024 * 1024
+export const MUSIC_URL_MAX = 300
+
+const MUSIC_HOSTS: [RegExp, string][] = [
+  [/(^|\.)spotify\.com$|^spotify\.link$/, 'Spotify'],
+  [/(^|\.)youtube\.com$|^youtu\.be$/, 'YouTube'],
+  [/^music\.apple\.com$/, 'Apple Music'],
+  [/(^|\.)soundcloud\.com$/, 'SoundCloud'],
+  [/(^|\.)deezer\.com$/, 'Deezer'],
+]
+
+/** Only plain https links to well-known music sites are shown, so nobody can plant a harmful link. */
+export function parseMusicLink(raw: string | null | undefined): { url: string; label: string } | null {
+  const text = (raw ?? '').trim()
+  if (!text || text.length > MUSIC_URL_MAX) return null
+  try {
+    const url = new URL(text)
+    if (url.protocol !== 'https:') return null
+    const host = url.hostname.toLowerCase()
+    const match = MUSIC_HOSTS.find(([pattern]) => pattern.test(host))
+    return match ? { url: url.toString(), label: match[1] } : null
+  } catch {
+    return null
+  }
 }

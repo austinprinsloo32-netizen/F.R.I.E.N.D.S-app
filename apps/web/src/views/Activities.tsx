@@ -15,6 +15,15 @@ import Avatar from '../components/Avatar'
 import Icon from '../components/Icon'
 import SafetyActions from '../components/SafetyActions'
 
+const IDEAS = [
+  { emoji: '☕', title: 'Coffee and a chat' },
+  { emoji: '🥾', title: 'Walk or hike' },
+  { emoji: '🎲', title: 'Games night' },
+  { emoji: '⚽', title: 'Kick-about in the park' },
+  { emoji: '📚', title: 'Read or study together' },
+  { emoji: '🍲', title: 'Share a meal' },
+]
+
 function PlanCard({ plan }: { plan: Plan }) {
   const { user, me, memberById, joinPlan, leavePlan, cancelPlan, notify } = useApp()
   const [busy, setBusy] = useState(false)
@@ -125,6 +134,12 @@ export default function Activities() {
   const [details, setDetails] = useState('')
   const [posting, setPosting] = useState(false)
 
+  function startWith(idea: string) {
+    setTitle(idea)
+    setOpen(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const mine = plans.filter((p) => p.host_id === user?.id)
   const others = plans.filter((p) => p.host_id !== user?.id)
 
@@ -174,6 +189,27 @@ export default function Activities() {
           <Icon name="plus" size={17} /> {open ? 'Close' : 'Host a plan'}
         </button>
       </header>
+
+      <section className="panel plan-hero">
+        <h3>Friendship grows when you do things together</h3>
+        <p className="muted">
+          A plan can be as small as a coffee. Post one, and the friends you have made can say “I’m in”. Pick an idea to
+          start:
+        </p>
+        <div className="chips" role="list">
+          {IDEAS.map((idea) => (
+            <button
+              key={idea.title}
+              type="button"
+              role="listitem"
+              className="chip chip-btn"
+              onClick={() => startWith(idea.title)}
+            >
+              {idea.emoji} {idea.title}
+            </button>
+          ))}
+        </div>
+      </section>
 
       {open && (
         <form className="panel plan-form" onSubmit={(event) => void submit(event)}>
@@ -280,18 +316,33 @@ export default function Activities() {
             ))}
           </ul>
         ) : (
-          <p className="muted panel-empty">
-            {plansLoading
-              ? 'Loading plans…'
-              : friends.length === 0
-                ? 'Plans are shared with friends. Add a few friends and their plans will show up here.'
-                : 'No plans from your friends yet. Be the first to host one.'}
-          </p>
-        )}
-        {friends.length === 0 && !plansLoading && (
-          <button type="button" className="btn btn-sm btn-primary" onClick={() => navigate('discover')}>
-            Find people
-          </button>
+          <div className="empty plan-empty">
+            <span className="empty-icon">
+              <Icon name="calendar" size={26} />
+            </span>
+            {plansLoading ? (
+              <h3>Loading plans…</h3>
+            ) : friends.length === 0 ? (
+              <>
+                <h3>Plans start with friends</h3>
+                <p>
+                  Add a few friends first, then their plans appear here and yours reach them. Say hello to someone who
+                  shares your interests.
+                </p>
+                <button type="button" className="btn btn-md btn-primary" onClick={() => navigate('discover')}>
+                  Find people
+                </button>
+              </>
+            ) : (
+              <>
+                <h3>Nothing planned yet. You could start something.</h3>
+                <p>Most meet-ups begin with one person saying “anyone keen?”. Be that person. It only takes a minute.</p>
+                <button type="button" className="btn btn-md btn-primary" onClick={() => startWith('Coffee and a chat')}>
+                  <Icon name="plus" size={17} /> Host the first plan
+                </button>
+              </>
+            )}
+          </div>
         )}
       </section>
     </div>

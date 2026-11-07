@@ -3309,6 +3309,97 @@ img {
     flex-direction: column;
   }
 }
+
+/* ==========================================================================
+   Mobile alignment, compact people tiles, status photo and song
+   ========================================================================== */
+
+/* Stop wide content from pushing cards past the right edge of the screen */
+.page {
+  grid-template-columns: minmax(0, 1fr);
+}
+.content,
+.page > *,
+.panel {
+  min-width: 0;
+}
+.grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+}
+.grid-compact {
+  grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr));
+}
+@media (max-width: 600px) {
+  .grid-compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .friend-tile {
+    padding: 14px 10px 12px;
+    gap: 10px;
+  }
+}
+
+.person-tile > .btn {
+  width: 100%;
+  justify-self: stretch;
+}
+.person-tile .friend-open small {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.match-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--lime);
+  color: var(--on-lime);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+/* Rounded status button */
+.btn-pill {
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.status-media {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+.status-media-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.status-photo {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-top: 8px;
+}
+.status-music {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
 /* Sidebar: let the menu scroll when the window is short */
 .sidebar {
   gap: 16px;
@@ -3323,4 +3414,65 @@ img {
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: rgb(255 255 255 / 0.2) transparent;
+}
+
+/* Buttons that were plain underlined links in headers become rounded */
+.panel-head .link-btn,
+.section-head .link-btn,
+.hero-meter .link-btn,
+.filters .link-btn,
+.empty .link-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-weight: 600;
+  font-size: 13.5px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.panel-head .link-btn:hover,
+.section-head .link-btn:hover,
+.filters .link-btn:hover {
+  border-color: var(--forest);
+}
+
+/* Activities */
+.plan-hero {
+  display: grid;
+  gap: 10px;
+}
+.plan-empty {
+  margin-top: 4px;
+}
+
+/* Admin */
+.admin-help ul {
+  margin: 8px 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+}
+.admin-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px 16px;
+  margin: 8px 0;
+}
+.admin-facts div {
+  display: grid;
+  gap: 1px;
+}
+.admin-facts dt {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.admin-facts dd {
+  margin: 0;
+  font-size: 14px;
 }

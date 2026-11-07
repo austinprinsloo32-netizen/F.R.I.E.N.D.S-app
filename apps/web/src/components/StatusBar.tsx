@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useApp } from '../state/context'
 import { navigate } from '../lib/route'
 import { initialsOf, shortTime } from '../lib/utils'
 import {
   STATUS_OPTIONS,
   STATUS_TEXT_MAX,
+  MUSIC_URL_MAX,
+  parseMusicLink,
   statusLine,
   statusOption,
   type StatusKind,
@@ -14,13 +16,39 @@ import SafetyActions from './SafetyActions'
 
 /** "Friends right now": a row of friends' 24-hour statuses, plus your own. */
 export default function StatusBar() {
-  const { me, user, friends, myStatus, statusOf, setMyStatus, clearMyStatus, notify, feedError } =
-    useApp()
+  const {
+    me,
+    user,
+    friends,
+    myStatus,
+    statusOf,
+    statusImageOf,
+    setMyStatus,
+    clearMyStatus,
+    notify,
+    feedError,
+  } = useApp()
   const [open, setOpen] = useState(false)
   const [kind, setKind] = useState<StatusKind>('free')
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
   const [viewingId, setViewingId] = useState<string | null>(null)
+  const [music, setMusic] = useState('')
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [preview, setPreview] = useState('')
+  const [removeImage, setRemoveImage] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  // Show a preview of the chosen photo, and tidy it up afterwards.
+  useEffect(() => {
+    if (!imageFile) {
+      setPreview('')
+      return
+    }
+    const url = URL.createObjectURL(imageFile)
+    setPreview(url)
+    return () => URL.revokeObjectURL(url)
+  }, [imageFile])
 
   const active = useMemo(
     () =>
@@ -49,13 +77,16 @@ export default function StatusBar() {
     setViewingId(null)
     setKind(myStatus?.kind ?? 'free')
     setText(myStatus?.text ?? '')
+    setMusic(myStatus?.music_url ?? '')
+    setImageFile(null)
+    setRemoveImage(false)
     setOpen(true)
   }
 
   async function save() {
     if (busy) return
     setBusy(true)
-    const error = await setMyStatus(kind, text)
+    const error = await setMyStatus(kind, text, { imageFile, removeImage, musicUrl: music })
     setBusy(false)
     if (error) {
       notify(error, 'error')
@@ -82,7 +113,11 @@ export default function StatusBar() {
     <section className="panel status-panel" aria-label="Friends right now">
       <header className="panel-head">
         <h3>Friends right now</h3>
-        <button type="button" className="link-btn" onClick={open ? () => setOpen(false) : openEditor}>
+        <button
+          type="button"
+          className="btn btn-sm btn-primary btn-pill"
+          onClick={open ? () => setOpen(false) : openEditor}
+        >
           {open ? 'Close' : myStatus ? 'Update my status' : 'Set my status'}
         </button>
       </header>
@@ -133,6 +168,17 @@ export default function StatusBar() {
               {statusOption(viewing.status.kind).emoji} {statusOption(viewing.status.kind).label}
             </span>
             {viewing.status.text.trim() && <p>{viewing.status.text}</p>}
+            {statusImageOf(viewing.member.id) && (
+              <img className="status-photo" src={statusImageOf(viewing.member.id)} alt="" loading="lazy" />
+            )}
+            {(() => {
+              const link = parseMusicLink(viewing.status.music_url)
+              return link ? (
+                <a className="status-music" href={link.url} target="_blank" rel="noopener noreferrer">
+                  🎵 Listen on {link.label}
+                </a>
+              ) : null
+            })()}
             <small className="muted">Updated {shortTime(viewing.status.updated_at)} · lasts 24 hours</small>
           </div>
           <div className="status-detail-actions">
@@ -187,6 +233,55 @@ export default function StatusBar() {
               {text.length}/{STATUS_TEXT_MAX} · Visible to your friends for 24 hours
             </small>
           </label>
+          <div className="status-media">
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              hidden
+              onChange={(event) => {
+                const file = event.target.files?.[0] ?? null
+                setImageFile(file)
+                if (file) setRemoveImage(false)
+                event.target.value = ''
+              }}
+            />
+            {(preview || (statusImageOf(user?.id ?? '') && !removeImage)) && (
+              <img
+                className="status-photo"
+                src={preview || statusImageOf(user?.id ?? '')}
+                alt="Your status photo"
+              />
+            )}
+            <div className="status-media-actions">
+              <button type="button" className="btn btn-sm btn-ghost" onClick={() => fileRef.current?.click()}>
+                📷 {preview || (myStatus?.image_path && !removeImage) ? 'Change photo' : 'Add a photo'}
+              </button>
+              {(preview || (myStatus?.image_path && !removeImage)) && (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-ghost"
+                  onClick={() => {
+                    setImageFile(null)
+                    setRemoveImage(true)
+                  }}
+                >
+                  Remove photo
+                </button>
+              )}
+            </div>
+            <label className="field">
+              <span>🎵 A song or video link (optional)</span>
+              <input
+                type="url"
+                inputMode="url"
+                value={music}
+                maxLength={MUSIC_URL_MAX}
+                placeholder="Paste a Spotify, YouTube, Apple Music or SoundCloud link"
+                onChange={(event) => setMusic(event.target.value)}
+              />
+            </label>
+          </div>
           <div className="status-actions">
             <button type="button" className="btn btn-sm btn-primary" disabled={busy} onClick={() => void save()}>
               Share status

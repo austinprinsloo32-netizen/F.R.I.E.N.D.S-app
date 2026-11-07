@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import type { AdminData, AdminMetrics, AdminReport, PhotoRequest } from '../lib/admin'
+import type {
+  AdminData,
+  AdminMember,
+  AdminMetrics,
+  AdminPlan,
+  AdminReport,
+  PhotoRequest,
+} from '../lib/admin'
 import type { AdminApi } from './context'
 
 function errorMessage(error: { message?: string } | null): string {
@@ -26,11 +33,19 @@ export function useAdmin(uid: string | undefined): AdminApi {
   }, [uid])
 
   const loadAdmin = useCallback(async (): Promise<AdminData> => {
-    const [metricsRes, reportsRes, photoRes] = await Promise.all([
+    const [metricsRes, reportsRes, photoRes, membersRes, plansRes] = await Promise.all([
       supabase.rpc('admin_metrics'),
       supabase.rpc('admin_reports'),
       supabase.rpc('admin_photo_requests'),
+      supabase.rpc('admin_members'),
+      supabase.rpc('admin_plans'),
     ])
+    const peopleFailed = membersRes.error ?? plansRes.error
+    const peopleError = peopleFailed
+      ? /could not find the function|does not exist/i.test(peopleFailed.message ?? '')
+        ? 'setup'
+        : errorMessage(peopleFailed)
+      : ''
     const failed = metricsRes.error ?? reportsRes.error ?? photoRes.error
     if (failed) {
       const missing = /could not find the function|does not exist/i.test(failed.message ?? '')
@@ -38,6 +53,9 @@ export function useAdmin(uid: string | undefined): AdminApi {
         metrics: null,
         reports: [],
         photoRequests: [],
+        members: [],
+        plans: [],
+        peopleError: '',
         error: missing
           ? 'The admin page needs a one-time database setup. Run supabase/admin.sql in the Supabase SQL Editor.'
           : errorMessage(failed),
@@ -47,6 +65,9 @@ export function useAdmin(uid: string | undefined): AdminApi {
       metrics: (metricsRes.data ?? null) as AdminMetrics | null,
       reports: (reportsRes.data ?? []) as AdminReport[],
       photoRequests: (photoRes.data ?? []) as PhotoRequest[],
+      members: (membersRes.data ?? []) as AdminMember[],
+      plans: (plansRes.data ?? []) as AdminPlan[],
+      peopleError,
       error: '',
     }
   }, [])

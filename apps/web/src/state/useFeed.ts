@@ -1,7 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { toJpeg } from '../lib/trust'
 import {
+  MUSIC_URL_MAX,
+  STATUS_BUCKET,
   STATUS_HOURS,
+  STATUS_IMAGE_MAX_BYTES,
+  STATUS_IMAGE_TTL,
+  parseMusicLink,
+  type StatusExtra,
   isMissingTable,
   type PostRow,
   type ReactionKind,
@@ -25,6 +32,8 @@ export function useFeed(uid: string | undefined, friendIdsKey: string): FeedApi 
   const [reactions, setReactions] = useState<ReactionRow[]>([])
   const [feedLoading, setFeedLoading] = useState(true)
   const [feedError, setFeedError] = useState('')
+  const [statusImages, setStatusImages] = useState<Record<string, string>>({})
+  const signedCache = useRef(new Map<string, { url: string; at: number }>())
 
   const reloadFeed = useCallback(async () => {
     if (!uid) {
@@ -37,7 +46,7 @@ export function useFeed(uid: string | undefined, friendIdsKey: string): FeedApi 
     const [statusRes, postRes] = await Promise.all([
       supabase
         .from('statuses')
-        .select('user_id, kind, text, expires_at, updated_at')
+        .select('*')
         .gt('expires_at', new Date().toISOString()),
       supabase
         .from('posts')
@@ -56,7 +65,33 @@ export function useFeed(uid: string | undefined, friendIdsKey: string): FeedApi 
       return
     }
     setFeedError('')
-    setStatuses((statusRes.data ?? []) as StatusRow[])
+    const statusRows = (statusRes.data ?? []) as StatusRow[]
+    setStatuses(statusRows)
+
+    // Photos on statuses: signed links are reused so the pictures do not reload every 30 seconds.
+    const withImage = statusRows.filter((row) => row.image_path)
+    const stale = withImage
+      .map((row) => row.image_path as string)
+      .filter((path) => {
+        const hit = signedCache.current.get(path)
+        return !hit || Date.now() - hit.at > (STATUS_IMAGE_TTL - 600) * 1000
+      })
+    if (stale.length > 0) {
+      const { data: signed } = await supabase.storage
+        .from(STATUS_BUCKET)
+        .createSignedUrls(stale, STATUS_IMAGE_TTL)
+      for (const item of signed ?? []) {
+        if (item.path && item.signedUrl && !item.error) {
+          signedCache.current.set(item.path, { url: item.signedUrl, at: Date.now() })
+        }
+      }
+    }
+    const nextImages: Record<string, string> = {}
+    for (const row of withImage) {
+      const hit = signedCache.current.get(row.image_path as string)
+      if (hit) nextImages[row.user_id] = hit.url
+    }
+    setStatusImages(nextImages)
     const nextPosts = (postRes.data ?? []) as PostRow[]
     setPosts(nextPosts)
 
@@ -99,34 +134,79 @@ export function useFeed(uid: string | undefined, friendIdsKey: string): FeedApi 
     [statuses],
   )
 
+  const statusImageOf = useCallback((id: string) => statusImages[id], [statusImages])
+
   const setMyStatus = useCallback(
-    async (kind: StatusKind, text: string) => {
+    async (kind: StatusKind, text: string, extra?: StatusExtra) => {
       if (!uid) return 'Please sign in again.'
+
+      const musicRaw = (extra?.musicUrl ?? '').trim()
+      if (musicRaw && (musicRaw.length > MUSIC_URL_MAX || !parseMusicLink(musicRaw))) {
+        return 'Use a link from Spotify, YouTube, Apple Music, SoundCloud or Deezer.'
+      }
+
+      const oldPath = statuses.find((row) => row.user_id === uid)?.image_path ?? null
+      let imagePath: string | null = oldPath
+      let uploaded: string | null = null
+
+      if (extra?.imageFile) {
+        const file = extra.imageFile
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+          return 'Please choose a JPG, PNG or WebP image.'
+        }
+        const blob = await toJpeg(file, 1280)
+        if (blob.size > STATUS_IMAGE_MAX_BYTES) return 'That photo is over 5 MB. Please choose a smaller one.'
+        uploaded = `${uid}/${crypto.randomUUID()}.jpg`
+        const { error: uploadError } = await supabase.storage.from(STATUS_BUCKET).upload(uploaded, blob, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: blob.type || 'image/jpeg',
+        })
+        if (uploadError) {
+          return /bucket/i.test(uploadError.message)
+            ? 'Photo statuses need a one-time setup. Run supabase/status_media.sql in Supabase.'
+            : uploadError.message
+        }
+        imagePath = uploaded
+      } else if (extra?.removeImage) {
+        imagePath = null
+      }
+
       const now = new Date()
       const { error } = await supabase.from('statuses').upsert(
         {
           user_id: uid,
           kind,
           text: text.trim(),
+          image_path: imagePath,
+          music_url: musicRaw || null,
           expires_at: new Date(now.getTime() + STATUS_HOURS * 3_600_000).toISOString(),
           updated_at: now.toISOString(),
         },
         { onConflict: 'user_id' },
       )
-      if (error) return error.message
+      if (error) {
+        if (uploaded) await supabase.storage.from(STATUS_BUCKET).remove([uploaded])
+        return /image_path|music_url/i.test(error.message)
+          ? 'Photo and song statuses need a one-time setup. Run supabase/status_media.sql in Supabase.'
+          : error.message
+      }
+      if (oldPath && oldPath !== imagePath) await supabase.storage.from(STATUS_BUCKET).remove([oldPath])
       await reloadFeed()
       return null
     },
-    [uid, reloadFeed],
+    [uid, statuses, reloadFeed],
   )
 
   const clearMyStatus = useCallback(async () => {
     if (!uid) return 'Please sign in again.'
+    const oldPath = statuses.find((row) => row.user_id === uid)?.image_path ?? null
     const { error } = await supabase.from('statuses').delete().eq('user_id', uid)
     if (error) return error.message
+    if (oldPath) await supabase.storage.from(STATUS_BUCKET).remove([oldPath])
     await reloadFeed()
     return null
-  }, [uid, reloadFeed])
+  }, [uid, statuses, reloadFeed])
 
   const createPost = useCallback(
     async (content: string) => {
@@ -200,6 +280,7 @@ export function useFeed(uid: string | undefined, friendIdsKey: string): FeedApi 
     reloadFeed,
     myStatus,
     statusOf,
+    statusImageOf,
     setMyStatus,
     clearMyStatus,
     createPost,

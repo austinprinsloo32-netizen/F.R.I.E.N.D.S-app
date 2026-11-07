@@ -61,7 +61,8 @@ function Rules() {
       <h3>5. Keep it honest and legal</h3>
       <p>
         No scams, spam, selling, recruiting or promotion. No illegal content. Nothing that encourages violence or
-        self-harm.
+        self-harm. This covers photos and links too: only share pictures you have the right to use, no nudity or
+        graphic content, and only song or video links that are safe to open.
       </p>
 
       <h3>6. Meeting in person</h3>
@@ -124,7 +125,9 @@ function Privacy() {
         </li>
         <li>
           <strong>Your profile:</strong> your name, bio, general location, interests, profile photo, any extra photos
-          and your “Ask me about” answers. Please keep your location general, such as a town, not an address.
+          and your “Ask me about” answers. Please keep your location general, such as a town, not an address. If you
+          add a photo or a song or video link to a status, that is stored too. Links open on the other company’s site,
+          which has its own privacy rules.
         </li>
         <li>
           <strong>What you do in the app:</strong> friend requests, messages, statuses, updates, reactions, plans you
@@ -148,6 +151,10 @@ function Privacy() {
           <tr>
             <td>Name, bio, location, interests, profile photo, “Ask me about” answers, badges</td>
             <td>Other members who are signed in</td>
+          </tr>
+          <tr>
+            <td>Email address, when you joined and last signed in</td>
+            <td>You and the {SITE_NAME} team (to run the service and keep members safe)</td>
           </tr>
           <tr>
             <td>Extra photos, statuses, updates, plans</td>
