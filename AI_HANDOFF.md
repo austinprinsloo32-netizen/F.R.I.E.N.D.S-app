@@ -38,4 +38,4 @@ The web app is the main product. It is a React 19 + TypeScript + Vite single-pag
 
 ## Current local work
 
-Recent local changes improve the Dashboard invite card, replace the Vite lightning favicon with the FRIENDS `f.` mark, and refine the Supabase schema scripts. These changes have not been pushed or deployed yet. Check the working tree before starting and keep Austin's existing untracked files untouched.
+Recent changes improve the Dashboard invite card, replace the Vite lightning favicon with the FRIENDS `f.` mark, and refine the Supabase schema scripts. They are on the `codex/claude-handoff` GitHub branch and have not been merged or deployed. Check the working tree before starting and keep Austin's existing untracked files untouched.
