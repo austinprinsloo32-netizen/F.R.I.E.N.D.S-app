@@ -57,6 +57,12 @@ function Rules() {
         Do not share anyone’s private details, photos or messages without their permission. Do not post screenshots
         of private conversations.
       </p>
+      <p>
+        In Communities, members can see your display name and profile photo, group news and plans, including a plan’s
+        time, place and who joined. Invite codes can be forwarded, so share them only with people you intend to invite.
+        There is no in-app report button on community news or plans yet; email{' '}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> if you need to raise a concern about them.
+      </p>
 
       <h3>5. Keep it honest and legal</h3>
       <p>
@@ -134,6 +140,10 @@ function Privacy() {
           host or join, people you block and reports you send.
         </li>
         <li>
+          <strong>Communities:</strong> the groups you join, the news you post as a host, the community plans you host,
+          and the plans you join.
+        </li>
+        <li>
           <strong>Technical data:</strong> basic logs kept by our hosting and database providers, such as your IP
           address and when you signed in.
         </li>
@@ -161,6 +171,14 @@ function Privacy() {
             <td>You and your friends</td>
           </tr>
           <tr>
+            <td>Community membership, name and profile photo</td>
+            <td>Members of that community</td>
+          </tr>
+          <tr>
+            <td>Community news and plans, including time, place and who joined</td>
+            <td>Members of that community</td>
+          </tr>
+          <tr>
             <td>Reactions to an update</td>
             <td>You, and the person who posted it</td>
           </tr>
@@ -178,6 +196,10 @@ function Privacy() {
           </tr>
         </tbody>
       </table>
+      <p>
+        Blocking someone does not hide shared community news or plans from either of you. Leaving a community removes
+        your membership and plan sign-ups; future plans you host are canceled. Community hosts can remove members.
+      </p>
       <p>
         Messages are not end-to-end encrypted. We do not read them as a routine, but someone with access to our
         database could. We only look when it is needed for safety, such as dealing with a report, or when the law
@@ -207,10 +229,10 @@ function Privacy() {
       <p>
         You can edit your profile, remove photos and delete your updates at any time. To delete your account, email{' '}
         <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> from the address you signed up with. We aim to delete
-        your profile, photos, plans and updates within 30 days, and we will tell you when it is done. An in-app delete
-        button is planned. Reports are different: we may keep a report and the details needed to act on it for up to 12
-        months after it is closed, so that other members stay safe. If something must be kept longer to meet the law,
-        we will keep only what the law requires.
+        your profile, photos, community memberships, plans and posts within 30 days, and we will tell you when it is
+        done. An in-app delete button is planned. Reports are different: we may keep a report and the details needed to
+        act on it for up to 12 months after it is closed, so that other members stay safe. If something must be kept
+        longer to meet the law, we will keep only what the law requires.
       </p>
 
       <h3>Your rights</h3>

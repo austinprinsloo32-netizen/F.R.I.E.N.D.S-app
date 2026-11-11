@@ -14,6 +14,9 @@ Your app is a static website that talks to Supabase, so hosting is simple. Do th
    6. `supabase/admin.sql`
    7. `supabase/admin_members.sql`
    8. `supabase/status_media.sql`
+   9. `supabase/communities.sql` if you are enabling Communities. Test this script on a separate Supabase project first, and confirm the live project is selected before you run it.
+
+   Communities has no in-app group-creation screen yet. After applying its SQL, use the example at the bottom of `communities.sql` to create the first group and assign its host. Choose a real group name and share its invite code only with people you intend to invite.
 
    Optional: `supabase/status_expiry_optional.sql` makes the database enforce the 24-hour status expiry. Do **not** run `supabase/profile_trust.sql`: it is an older version of the gallery that the app no longer uses and it clashes with `trust_gallery.sql`.
 3. Make yourself an admin. In `supabase/admin.sql` the last block is commented out. Copy it into a new query, replace `PUT-YOUR-LOGIN-EMAIL-HERE` with the email you log in with, remove the two leading `--` on each line, and run it. After that, an **Admin** link appears in your menu.
@@ -24,6 +27,8 @@ In the VS Code terminal:
 
     cd "C:\Users\austi\Development\FRIENDS - Copy\apps\web"
     npm run build
+
+To include Communities in a Netlify Drop build, add `VITE_FEATURE_COMMUNITIES=true` to `apps/web/.env.production.local` before building. Keep `apps/web/.env.local` set to the **live** Supabase Project URL and publishable key. Do not use `.env.communities.local`, which is for the test project. Remove the feature switch from the production build environment if you need to hide Communities again.
 
 This makes a folder called `dist` inside `apps\web`. That folder IS your website. Your Supabase keys from `.env.local` are baked into it, which is normal: the "publishable" key is meant to be public, and your data is protected by the database rules.
 
@@ -52,10 +57,7 @@ Without this, the confirmation emails send people to the wrong place.
 
 ## 4. Sign-up emails (important for a beta)
 
-Supabase's built-in email sender is limited to a handful of emails per hour, so a group of new sign-ups can get stuck waiting for confirmation emails. For the first small beta either:
-
-- turn off **Confirm email** (Authentication -> Providers -> Email), accepting that anyone with any address can sign up; or
-- set up your own email service under Authentication -> SMTP Settings (several have free tiers) before you invite more than a few people.
+Supabase's built-in email sender is limited to two emails per hour per project. Keep **Confirm email** turned on for the live project and configure custom SMTP under Authentication -> Emails -> SMTP Settings before inviting a group of new users. Turning off confirmation is only appropriate for an isolated test project because it accepts unverified email addresses.
 
 ## 5. Free-plan limits to know about
 
@@ -66,5 +68,6 @@ Free plans change, so check the current limits on each site. As of writing: Supa
 - [ ] Open the live link in a private window on your phone and create a new account.
 - [ ] The Rules and Privacy links work on the sign-in screen.
 - [ ] Add a friend, post an update, host a plan and join it from a second account.
+- [ ] If Communities is enabled, join a community with a second account and confirm members can only post news as the host.
 - [ ] The Admin page loads for you and not for a normal account.
 - [ ] You have read the Rules and Privacy pages and agree with what they promise. They are plain-language drafts, not legal advice: get them checked (POPIA applies in South Africa) before a wider launch.

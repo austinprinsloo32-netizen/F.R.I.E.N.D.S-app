@@ -10,7 +10,7 @@ export const OPERATOR_NAME = 'The F.R.I.E.N.D.S team'
 /** Where people send questions, deletion requests and appeals. */
 export const CONTACT_EMAIL = 'Austinprinsloo64@gmail.com'
 
-export const POLICY_UPDATED = '2 November 2026'
+export const POLICY_UPDATED = '11 November 2026'
 
 /** South African helplines. Numbers checked on 2 November 2026 against the national helplines list at services.nwu.ac.za; they can change, so re-check before launch. */
 export const HELPLINES: { name: string; number: string; note: string }[] = [

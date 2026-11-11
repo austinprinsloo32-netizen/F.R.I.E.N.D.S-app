@@ -14,16 +14,6 @@ For what the app does, screenshots and the full setup guide, see the [main READM
    VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_KEY
    ```
 
-### Communities preview
-
-Communities is still behind a feature switch and is not enabled on the live site. To preview it safely, first point `.env.local` at a **separate test Supabase project**, then add:
-
-```env
-VITE_FEATURE_COMMUNITIES=true
-```
-
-In that test project, apply `base_tables.sql`, `friends_feed.sql`, `safety.sql`, then `communities.sql`. The last section of `communities.sql` shows how an administrator creates the first group and its host. Do not enable this switch against the live database while the Communities SQL remains a draft.
-
 3. Install and run:
 
    ```bash
@@ -32,6 +22,10 @@ In that test project, apply `base_tables.sql`, `friends_feed.sql`, `safety.sql`,
    ```
 
    Open the address Vite prints, usually <http://localhost:5173>.
+
+### Communities
+
+Communities is enabled at build time with `VITE_FEATURE_COMMUNITIES=true`. Apply `communities.sql` only after the base app scripts in the main README, and test it on a separate Supabase project before using it on a live project. The first group and host are created by an administrator using the example SQL at the end of `communities.sql`.
 
 ## Commands
 

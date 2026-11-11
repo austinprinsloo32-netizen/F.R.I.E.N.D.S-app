@@ -30,6 +30,7 @@ F.R.I.E.N.D.S is a friendship-first social app for adults. It is not a dating ap
 - Post an **open plan** (coffee, a walk, games night) with a place, a time and a limited number of spots
 - Friends can join or leave, and the host can cancel
 - Hosts and joiners are visible to friends only
+- Join invite-only Communities, read host news, and host or join small group plans
 
 **Feel safe**
 - Block and report people; blocking is invisible to the person blocked
@@ -42,7 +43,6 @@ F.R.I.E.N.D.S is a friendship-first social app for adults. It is not a dating ap
 
 ## On the roadmap
 
-- **Communities:** invite-only, host-led groups are being built as an MVP on a separate feature branch. Open joining and anonymous participation are not included in this first version.
 - **Support:** guided listening with clear boundaries (not therapy or crisis care)
 - A full mobile app (the `apps/mobile` folder is an Expo starter)
 - Member growth plan and richer discovery
@@ -77,7 +77,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_KEY
 
 ### 3. Set up the database
 
-Open the Supabase **SQL Editor**, then run these scripts from `supabase/` **in this order**. All of them are safe to run again.
+Open the Supabase **SQL Editor**, then run these scripts from `supabase/` **in this order**. For an existing live project, test `communities.sql` on a separate project first.
 
 | Order | Script | What it adds |
 |------:|--------|--------------|
@@ -89,6 +89,7 @@ Open the Supabase **SQL Editor**, then run these scripts from `supabase/` **in t
 | 6 | `admin.sql` | Admin role, metrics, reports and photo checks |
 | 7 | `admin_members.sql` | Admin member list and plans overview |
 | 8 | `status_media.sql` | Photo and song link on a status |
+| 9 | `communities.sql` | Invite-only Communities (optional until you enable the feature) |
 
 Optional:
 

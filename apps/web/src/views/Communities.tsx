@@ -482,10 +482,7 @@ function CommunityPage({
       {detail.error === 'setup' && (
         <section className="panel">
           <h3>Community details aren’t set up yet</h3>
-          <p className="muted">
-            Review <strong>supabase/communities.sql</strong> and try it in a separate test Supabase project first.
-            Don’t run this draft against the live database.
-          </p>
+          <p className="muted">Communities are temporarily unavailable. Please try again later.</p>
         </section>
       )}
 
@@ -545,8 +542,7 @@ export default function Communities({ initialCode = '' }: { initialCode?: string
             <h3>Communities</h3>
           </header>
           <p className="muted panel-empty">
-            Communities need a one-time database setup. Open <strong>supabase/communities.sql</strong>, review it, and
-            run it in a test Supabase project first.
+            Communities are temporarily unavailable. Please try again later.
           </p>
         </section>
       </div>
