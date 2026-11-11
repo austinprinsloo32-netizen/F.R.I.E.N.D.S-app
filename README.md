@@ -81,22 +81,23 @@ Open the Supabase **SQL Editor**, then run these scripts from `supabase/` **in t
 
 | Order | Script | What it adds |
 |------:|--------|--------------|
-| 1 | `friends_feed.sql` | Statuses, posts, reactions and the friends-only feed |
-| 2 | `safety.sql` | Blocking and reporting |
-| 3 | `trust_gallery.sql` | Photo gallery, "Ask me about" prompts, photo-check badge |
-| 4 | `plans.sql` | Open plans (Activities) |
-| 5 | `admin.sql` | Admin role, metrics, reports and photo checks |
-| 6 | `admin_members.sql` | Admin member list and plans overview |
-| 7 | `status_media.sql` | Photo and song link on a status |
+| 1 | `base_tables.sql` | Profiles, friend requests, conversations, messages and the profile-picture bucket |
+| 2 | `friends_feed.sql` | Statuses, posts, reactions and the friends-only feed |
+| 3 | `safety.sql` | Blocking and reporting |
+| 4 | `trust_gallery.sql` | Photo gallery, "Ask me about" prompts, photo-check badge |
+| 5 | `plans.sql` | Open plans (Activities) |
+| 6 | `admin.sql` | Admin role, metrics, reports and photo checks |
+| 7 | `admin_members.sql` | Admin member list and plans overview |
+| 8 | `status_media.sql` | Photo and song link on a status |
 
 Optional:
+
+- Do not run `profile_trust.sql`. It is an older version of the photo gallery that the app no longer uses, and it clashes with `trust_gallery.sql`.
 
 - `status_expiry_optional.sql` makes the database enforce the 24-hour status expiry instead of the browser.
 - `audit_policies.sql` is read-only. It lists your row-level security rules so you can review them.
 
 **Make yourself an admin.** The last block of `admin.sql` (section 5) is commented out. Copy it into a new query, change the email in it to the one you log in with, remove the leading `--` on each line, and run it. An **Admin** link then appears in your menu.
-
-> **Note:** the core tables (`profiles`, `friend_requests`, `conversations` and `messages`) are used by the app but are not yet created by any script in this repository. A brand-new Supabase project needs them added before step 3 will work. Until a base schema script is added, treat this repo as set up against an existing project.
 
 ### 4. Run it
 

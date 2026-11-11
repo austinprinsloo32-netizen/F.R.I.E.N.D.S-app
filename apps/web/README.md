@@ -1,75 +1,45 @@
-# React + TypeScript + Vite
+# F.R.I.E.N.D.S web app
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The main product: a React 19 + TypeScript app built with Vite, using Supabase for sign-in, the database, file storage and row-level security.
 
-Currently, two official plugins are available:
+For what the app does, screenshots and the full setup guide, see the [main README](../../README.md). To put it online, see [DEPLOY.md](../../DEPLOY.md).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Quick start
 
-## React Compiler
+1. Set up the database first: run the scripts in [`../../supabase`](../../supabase) in the order given in the main README, starting with `base_tables.sql`.
+2. Create `apps/web/.env.local` with your Supabase project's details:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+   ```env
+   VITE_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+   VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_KEY
+   ```
 
-## Expanding the ESLint configuration
+3. Install and run:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+   ```bash
+   npm install
+   npm run dev
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+   Open the address Vite prints, usually <http://localhost:5173>.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Commands
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Command | What it does |
+|---------|--------------|
+| `npm run dev` | Starts the dev server with hot reload |
+| `npm run build` | Type-checks and builds the site into `dist/` |
+| `npm run preview` | Serves the production build locally |
+| `npm run lint` | Runs ESLint |
 
+## Source layout
+
+```text
+src/
+  views/       Pages: Dashboard, Discover, Friends, Messages, Activities, Profile, Admin...
+  components/  Shared UI: feed, status bar, photo gallery, safety actions...
+  state/       App state and Supabase data hooks
+  lib/         Supabase client, routing, site settings (site.ts), helpers
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+Before inviting people, set `OPERATOR_NAME` and `CONTACT_EMAIL` in `src/lib/site.ts`. They appear on the public Rules and Privacy pages.

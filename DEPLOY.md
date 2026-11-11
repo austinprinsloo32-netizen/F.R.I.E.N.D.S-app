@@ -6,11 +6,16 @@ Your app is a static website that talks to Supabase, so hosting is simple. Do th
 
 1. Open `apps/web/src/lib/site.ts` and change **CONTACT_EMAIL** to an address you are happy to publish, and **OPERATOR_NAME** to your name or business name. These appear on the public Rules and Privacy pages.
 2. Run the database files in Supabase (SQL Editor -> New query -> paste -> Run), **in this order**. Skip any you have already run:
-   1. `supabase/friends_feed.sql`
-   2. `supabase/safety.sql`
-   3. `supabase/trust_gallery.sql`
-   4. `supabase/plans.sql`
-   5. `supabase/admin.sql`
+   1. `supabase/base_tables.sql` (profiles, friend requests, chats, messages and the profile-picture bucket)
+   2. `supabase/friends_feed.sql`
+   3. `supabase/safety.sql`
+   4. `supabase/trust_gallery.sql`
+   5. `supabase/plans.sql`
+   6. `supabase/admin.sql`
+   7. `supabase/admin_members.sql`
+   8. `supabase/status_media.sql`
+
+   Optional: `supabase/status_expiry_optional.sql` makes the database enforce the 24-hour status expiry. Do **not** run `supabase/profile_trust.sql`: it is an older version of the gallery that the app no longer uses and it clashes with `trust_gallery.sql`.
 3. Make yourself an admin. In `supabase/admin.sql` the last block is commented out. Copy it into a new query, replace `PUT-YOUR-LOGIN-EMAIL-HERE` with the email you log in with, remove the two leading `--` on each line, and run it. After that, an **Admin** link appears in your menu.
 
 ## 1. Build the site
