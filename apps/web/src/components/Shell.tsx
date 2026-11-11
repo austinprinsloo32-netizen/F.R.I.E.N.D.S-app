@@ -4,6 +4,7 @@ import { navigate, type View } from '../lib/route'
 import Avatar from './Avatar'
 import Icon, { type IconName } from './Icon'
 import Toasts from './Toasts'
+import { COMMUNITIES_ENABLED } from '../lib/communities'
 
 type NavItem = { view: View; label: string; short?: string; icon: IconName; soon?: boolean }
 
@@ -18,7 +19,7 @@ const primary: NavItem[] = [
 const extra: NavItem[] = [{ view: 'activities', label: 'Activities', icon: 'calendar' }]
 
 const upcoming: NavItem[] = [
-  { view: 'communities', label: 'Communities', icon: 'circles', soon: true },
+  { view: 'communities', label: 'Communities', icon: 'circles', soon: !COMMUNITIES_ENABLED },
   { view: 'support', label: 'Support', icon: 'heart', soon: true },
 ]
 
@@ -96,7 +97,7 @@ function MoreSheet({
           {upcoming.map((item) => (
             <button key={item.view} type="button" className="more-item" onClick={() => go(item.view)}>
               <Icon name={item.icon} size={20} /> {item.label}
-              <span className="soon">Soon</span>
+              {item.soon && <span className="soon">Soon</span>}
             </button>
           ))}
           {isAdmin && (
@@ -180,7 +181,7 @@ export default function Shell({ view, children }: { view: View; children: ReactN
         <nav className="nav" aria-label="Main">
           {primary.map(renderNav)}
           {extra.map(renderNav)}
-          <p className="nav-label">On the roadmap</p>
+          <p className="nav-label">{COMMUNITIES_ENABLED ? 'More' : 'On the roadmap'}</p>
           {upcoming.map(renderNav)}
           {isAdmin && (
             <>

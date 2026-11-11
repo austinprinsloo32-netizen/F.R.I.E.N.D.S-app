@@ -42,7 +42,7 @@ F.R.I.E.N.D.S is a friendship-first social app for adults. It is not a dating ap
 
 ## On the roadmap
 
-- **Communities:** groups around hobbies, identities and goals, with moderated spaces and the option to join openly or anonymously
+- **Communities:** invite-only, host-led groups are being built as an MVP on a separate feature branch. Open joining and anonymous participation are not included in this first version.
 - **Support:** guided listening with clear boundaries (not therapy or crisis care)
 - A full mobile app (the `apps/mobile` folder is an Expo starter)
 - Member growth plan and richer discovery

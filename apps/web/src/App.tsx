@@ -15,6 +15,8 @@ import Profile from './views/Profile'
 import ResetPassword from './views/ResetPassword'
 import Roadmap from './views/Roadmap'
 import { useRecovering } from './lib/recovery'
+import Communities from './views/Communities'
+import { COMMUNITIES_ENABLED } from './lib/communities'
 
 function Routes() {
   const { user, authReady } = useApp()
@@ -64,9 +66,11 @@ function Routes() {
       {route.view === 'messages' && <Messages friendId={route.param} />}
       {route.view === 'profile' && <Profile />}
       {route.view === 'activities' && <Activities />}
+      {route.view === 'communities' &&
+        (COMMUNITIES_ENABLED ? <Communities initialCode={route.param ?? ''} /> : <Roadmap which="communities" />)}
+      {route.view === 'support' && <Roadmap which="support" />}
       {route.view === 'admin' && <Admin />}
       {(route.view === 'rules' || route.view === 'privacy') && <Legal which={route.view} />}
-      {(route.view === 'communities' || route.view === 'support') && <Roadmap which={route.view} />}
     </Shell>
   )
 }

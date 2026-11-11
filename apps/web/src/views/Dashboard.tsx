@@ -15,9 +15,12 @@ import RelationButton from '../components/RelationButton'
 import StatusBar from '../components/StatusBar'
 import Feed from '../components/Feed'
 import InviteCard from '../components/InviteCard'
+import { COMMUNITIES_ENABLED } from '../lib/communities'
 
 const roadmap: { view: 'communities' | 'support'; icon: IconName; label: string; text: string }[] = [
-  { view: 'communities', icon: 'circles', label: 'Communities', text: 'Groups around shared interests' },
+  ...(!COMMUNITIES_ENABLED
+    ? [{ view: 'communities' as const, icon: 'circles' as const, label: 'Communities', text: 'Groups around shared interests' }]
+    : []),
   { view: 'support', icon: 'heart', label: 'Support', text: 'Guided listening' },
 ]
 
