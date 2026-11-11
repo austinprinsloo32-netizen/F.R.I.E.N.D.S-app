@@ -64,10 +64,12 @@ create table if not exists public.friend_requests (
   check (sender_id <> receiver_id)
 );
 
--- Only one request per pair of people, in either direction.
--- (A duplicate gives error 23505, which the app turns into "A request already exists".)
-create unique index if not exists friend_requests_pair_idx
-  on public.friend_requests (least(sender_id, receiver_id), greatest(sender_id, receiver_id));
+-- Only one active request or friendship per pair, in either direction.
+-- Keep declined rows for history, but allow either person to send a fresh request.
+drop index if exists public.friend_requests_pair_idx;
+create unique index friend_requests_pair_idx
+  on public.friend_requests (least(sender_id, receiver_id), greatest(sender_id, receiver_id))
+  where status in ('pending', 'accepted');
 
 create index if not exists friend_requests_receiver_idx on public.friend_requests (receiver_id, status);
 create index if not exists friend_requests_sender_idx on public.friend_requests (sender_id, status);

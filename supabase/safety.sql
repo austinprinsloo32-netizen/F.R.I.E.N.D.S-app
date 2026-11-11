@@ -45,7 +45,10 @@ as $$
   );
 $$;
 
-grant execute on function public.is_blocked(uuid, uuid) to authenticated;
+-- This helper is for the database's own security-definer functions. Do not
+-- expose it as an RPC: that would let members check whether two other people
+-- have blocked each other.
+revoke all on function public.is_blocked(uuid, uuid) from public, anon, authenticated;
 
 -- Friends now means: accepted request AND no block. This hides statuses and updates both ways.
 create or replace function public.are_friends(a uuid, b uuid)
@@ -66,6 +69,18 @@ as $$
 $$;
 
 grant execute on function public.are_friends(uuid, uuid) to authenticated;
+
+-- Keep chat creation aligned with the block-aware friendship rule above.
+drop policy if exists "conversations: start with a friend" on public.conversations;
+create policy "conversations: start with a friend" on public.conversations
+  for insert to authenticated
+  with check (
+    (user_one = auth.uid() or user_two = auth.uid())
+    and public.are_friends(
+      auth.uid(),
+      case when user_one = auth.uid() then user_two else user_one end
+    )
+  );
 
 -- ---------------------------------------------------------------
 -- 2. block_user(): blocks someone and ends any friendship or pending request

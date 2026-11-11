@@ -2091,6 +2091,12 @@ img {
   padding: 8px 0;
 }
 
+.invite-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .mini-list {
   display: grid;
   gap: 2px;
