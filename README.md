@@ -90,6 +90,7 @@ Open the Supabase **SQL Editor**, then run these scripts from `supabase/` **in t
 | 7 | `admin_members.sql` | Admin member list and plans overview |
 | 8 | `status_media.sql` | Photo and song link on a status |
 | 9 | `communities.sql` | Invite-only Communities (optional until you enable the feature) |
+| 10 | `community_reports.sql` | Reporting for Communities posts and plans (run after `communities.sql`) |
 
 Optional:
 

@@ -33,13 +33,15 @@ export function useAdmin(uid: string | undefined): AdminApi {
   }, [uid])
 
   const loadAdmin = useCallback(async (): Promise<AdminData> => {
-    const [metricsRes, reportsRes, photoRes, membersRes, plansRes] = await Promise.all([
+    const [metricsRes, fullReportsRes, photoRes, membersRes, plansRes] = await Promise.all([
       supabase.rpc('admin_metrics'),
-      supabase.rpc('admin_reports'),
+      supabase.rpc('admin_reports_full'),
       supabase.rpc('admin_photo_requests'),
       supabase.rpc('admin_members'),
       supabase.rpc('admin_plans'),
     ])
+    // Older databases don't have admin_reports_full yet (community_reports.sql); fall back.
+    const reportsRes = fullReportsRes.error ? await supabase.rpc('admin_reports') : fullReportsRes
     const peopleFailed = membersRes.error ?? plansRes.error
     const peopleError = peopleFailed
       ? /could not find the function|does not exist/i.test(peopleFailed.message ?? '')

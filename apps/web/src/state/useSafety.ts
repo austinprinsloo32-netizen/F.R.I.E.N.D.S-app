@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { safetyErrorText, type ReportInput } from '../lib/safety'
+import {
+  communityReportErrorText,
+  safetyErrorText,
+  type CommunityReportInput,
+  type ReportInput,
+} from '../lib/safety'
 import type { SafetyApi } from './context'
 
 /**
@@ -66,5 +71,19 @@ export function useSafety(uid: string | undefined, onChanged: () => Promise<void
     [uid],
   )
 
-  return { blockedIds, blockMember, unblockMember, reportMember }
+  const reportCommunityContent = useCallback(
+    async (input: CommunityReportInput) => {
+      if (!uid) return 'Please sign in again.'
+      const { error } = await supabase.rpc('report_community_content', {
+        content_kind: input.kind,
+        content_id: input.targetId,
+        report_reason: input.reason,
+        report_details: input.details.trim(),
+      })
+      return error ? communityReportErrorText(error) : null
+    },
+    [uid],
+  )
+
+  return { blockedIds, blockMember, unblockMember, reportMember, reportCommunityContent }
 }

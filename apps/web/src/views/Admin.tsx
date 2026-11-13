@@ -281,9 +281,12 @@ export default function Admin() {
                     </div>
                     <p className="muted">
                       {report.reporter_name} reported {report.reported_name} · {shortTime(report.created_at)}
+                      {report.kind === 'community_post' && ` · Community post${report.community_name ? ` in ${report.community_name}` : ''}`}
+                      {report.kind === 'community_plan' && ` · Community plan${report.community_name ? ` in ${report.community_name}` : ''}`}
                     </p>
                     {report.details && <p>“{report.details}”</p>}
                     {report.post_content && <blockquote className="admin-quote">{report.post_content}</blockquote>}
+                    {report.content_snapshot && <blockquote className="admin-quote">{report.content_snapshot}</blockquote>}
                     <div className="admin-actions">
                       {report.status !== 'reviewing' && report.status !== 'resolved' && (
                         <button

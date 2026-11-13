@@ -17,6 +17,7 @@ import {
 } from '../lib/communities'
 import Avatar from '../components/Avatar'
 import Icon from '../components/Icon'
+import ReportContent from '../components/ReportContent'
 
 type Detail = ReturnType<typeof useCommunityDetail>
 type Tab = 'plans' | 'news' | 'members'
@@ -108,6 +109,7 @@ function CommunityPlanCard({ plan, detail }: { plan: CommunityPlan; detail: Deta
               {left === 0 ? 'Full' : 'I’m in'}
             </button>
           ))}
+        {!mine && <ReportContent kind="plan" targetId={plan.id} />}
       </footer>
     </li>
   )
@@ -238,7 +240,7 @@ function PlansTab({ detail }: { detail: Detail }) {
 /* ----------------------------------------------------------------- news */
 
 function NewsTab({ detail }: { detail: Detail }) {
-  const { notify } = useApp()
+  const { user, notify } = useApp()
   const [text, setText] = useState('')
   const [posting, setPosting] = useState(false)
   const isHost = detail.myRole === 'host'
@@ -294,20 +296,23 @@ function NewsTab({ detail }: { detail: Detail }) {
                 </span>
               </header>
               <p className="plan-details">{post.body}</p>
-              {isHost && (
+              {(isHost || post.author_id !== user?.id) && (
                 <footer className="plan-actions">
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-ghost"
-                    onClick={() => {
-                      if (!window.confirm('Delete this post?')) return
-                      void detail.deletePost(post.id).then((error) => {
-                        if (error) notify(error, 'error')
-                      })
-                    }}
-                  >
-                    Delete
-                  </button>
+                  {isHost && (
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-ghost"
+                      onClick={() => {
+                        if (!window.confirm('Delete this post?')) return
+                        void detail.deletePost(post.id).then((error) => {
+                          if (error) notify(error, 'error')
+                        })
+                      }}
+                    >
+                      Delete
+                    </button>
+                  )}
+                  {post.author_id !== user?.id && <ReportContent kind="post" targetId={post.id} />}
                 </footer>
               )}
             </li>

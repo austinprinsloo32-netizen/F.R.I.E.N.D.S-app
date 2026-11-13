@@ -27,6 +27,10 @@ export type AdminReport = {
   reported_id: string
   reported_name: string
   post_content: string | null
+  /** Only present when supabase/community_reports.sql has been run */
+  kind?: 'member' | 'community_post' | 'community_plan' | 'community_content'
+  community_name?: string | null
+  content_snapshot?: string | null
 }
 
 export type PhotoRequest = {

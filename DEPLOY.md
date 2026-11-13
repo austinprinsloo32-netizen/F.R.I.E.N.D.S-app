@@ -15,6 +15,7 @@ Your app is a static website that talks to Supabase, so hosting is simple. Do th
    7. `supabase/admin_members.sql`
    8. `supabase/status_media.sql`
    9. `supabase/communities.sql` if you are enabling Communities. Test this script on a separate Supabase project first, and confirm the live project is selected before you run it.
+   10. `supabase/community_reports.sql` if Communities is enabled. It adds the Report button for posts and plans and shows them in Admin. Run it after `communities.sql`.
 
    Communities has no in-app group-creation screen yet. After applying its SQL, use the example at the bottom of `communities.sql` to create the first group and assign its host. Choose a real group name and share its invite code only with people you intend to invite.
 

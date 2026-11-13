@@ -11,7 +11,7 @@ import type {
   Tone,
 } from '../lib/types'
 
-import type { ReportInput } from '../lib/safety'
+import type { CommunityReportInput, ReportInput } from '../lib/safety'
 import type { Plan, PlanInput } from '../lib/plans'
 import type { AdminData, AdminReport } from '../lib/admin'
 import type { GalleryPhoto, ProfileExtras, PromptAnswer } from '../lib/trust'
@@ -47,6 +47,7 @@ export type SafetyApi = {
   blockMember: (id: string) => Promise<string | null>
   unblockMember: (id: string) => Promise<string | null>
   reportMember: (input: ReportInput) => Promise<string | null>
+  reportCommunityContent: (input: CommunityReportInput) => Promise<string | null>
 }
 
 export type TrustApi = {
