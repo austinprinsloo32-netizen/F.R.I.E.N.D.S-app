@@ -1,0 +1,9 @@
+# Netlify build settings for F.R.I.E.N.D.S (lives next to package.json in apps/web).
+# In Netlify set Base directory = apps/web. Add the VITE_ values under
+# Site configuration -> Environment variables (never commit keys here).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"

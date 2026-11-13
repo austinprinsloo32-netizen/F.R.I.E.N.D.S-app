@@ -42,6 +42,10 @@ This makes a folder called `dist` inside `apps\web`. That folder IS your website
 3. You get a link like `https://something-random.netlify.app`. You can rename it under Site configuration -> Change site name.
 4. To update later: run `npm run build` again and drag the new `dist` folder onto the same site's **Deploys** page.
 
+#### Optional: update automatically on every `git push`
+
+In Netlify open your site -> **Project configuration -> Build & deploy -> Continuous deployment -> Link repository**, pick GitHub, install the Netlify GitHub App for this repository if asked, and choose the repository. Then set **Base directory** `apps/web`, **Build command** `npm run build`, **Publish directory** `dist` (the `netlify.toml` in `apps/web` already says this), and **Production branch** to the branch you deploy from. Add `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` and, if wanted, `VITE_FEATURE_COMMUNITIES=true` under **Environment variables**. Afterwards a push to that branch deploys the site; other branches get preview links.
+
 ### Option B: Cloudflare Pages (free, commercial use allowed, deploys from GitHub)
 
 Connect your GitHub repository, set the root directory to `apps/web`, the build command to `npm run build` and the output directory to `dist`. Add the two `VITE_SUPABASE_...` values from `.env.local` as environment variables. Every `git push` then updates the site.
